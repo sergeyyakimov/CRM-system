@@ -23,6 +23,7 @@
 <script>
 import HomeBill from '@/components/HomeBill.vue';
 import HomeCurrency from '@/components/HomeCurrency.vue';
+import messages from '@/utils/messages.js';
 export default {
   name: 'home',
   data: () => ({
@@ -32,6 +33,9 @@ export default {
   async mounted() {
     this.currency = await this.$store.dispatch('fetchCurrency');
     this.loading = false;
+    if (messages[this.$route.query.message]) {
+      this.$message(messages[this.$route.query.message]);
+    }
   },
   methods: {
     async refresh() {
