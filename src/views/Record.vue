@@ -6,7 +6,7 @@
 
     <Loader v-if='loading' />
 
-    <p class="center" v-else-if='!categories.length'>Категорий пока нет. <router-link to='/categories'>Добавить новую категорию</router-link></p>
+    <p class="center" v-else-if='!categories.length'>{{"Message_NoCategories" | localize}}. <router-link to='/categories'>{{'AddFirst'|localize}}</router-link></p>
 
     <form v-else class="form" @submit.prevent='submitHandler'>
       <div class="input-field" >
@@ -56,7 +56,7 @@
         <label for="amount">{{"Amount" | localize}}</label>
          <span v-if='$v.amount.$dirty && !$v.amount.minValue'
           class="helper-text invalid">
-          Минимальное значение {{$v.amount.$params.minValue.min}}
+          {{'Message_MinLength'|localize}} {{$v.amount.$params.minValue.min}}
           </span>
       </div>
 
@@ -70,7 +70,7 @@
         <label for="description">{{"Description" | localize}}</label>
         <span v-if='$v.description.$dirty && !$v.description.required'
           class="helper-text invalid">
-          Введите описание
+          {{'Message_EnterDescription'|localize}}
         </span>
       </div>
 
@@ -85,6 +85,7 @@
 <script>
 import {required, minValue} from 'vuelidate/lib/validators';
 import {mapGetters} from 'vuex';
+import localizeFilter from '@/filters/localize.filter.js';
 
 export default {
   name: 'record',
@@ -134,7 +135,7 @@ export default {
         });
           const bill = this.type === 'income' ? this.info.bill + this.amount : this.info.bill - this.amount;
           await this.$store.dispatch('updateInfo', {bill});
-          this.$message('Запись успешно создана');
+          this.$message(localizeFilter('RecordHasBeenCreated'));
           this.$v.$reset();
           this.amount = 1;
           this.description = '';
@@ -142,7 +143,7 @@ export default {
 
         }
       } else {
-        this.$message(`Недостаточно средств на счете (${this.amount - this.info.bill})`);
+        this.$message(`${localizeFilter('NotEnoughMoney')} (${this.amount - this.info.bill})`);
       }
     }
   },

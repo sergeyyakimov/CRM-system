@@ -7,7 +7,7 @@
 
     <Loader v-if="loading"/>
 
-    <p class="center" v-else-if='!categories.length'>Категорий пока нет. <router-link to='/categories'>Добавить новую категорию</router-link></p>
+    <p class="center" v-else-if='!categories.length'>{{"Message_NoCategories" | localize}}. <router-link to='/categories'>{{"AddFirst" | localize}}</router-link></p>
 
     <section v-else>
       <div v-for="cat of categories" :key='cat.id'>
@@ -30,6 +30,7 @@
 <script>
 import {mapGetters} from 'vuex';
 import currencyFilter from '@/filters/currency.filter.js';
+import localizeFilter from '@/filters/localize.filter'
 
 export default {
   name: 'planning',
@@ -61,7 +62,7 @@ export default {
       const progressColor = percent < 60 ? 'green' : percent < 100 ? 'yellow' : 'red';
 
       const tooltipValue = c.limit - spend;
-      const tooltip = `${tooltipValue < 0 ? 'Превышение на' : 'Осталось'} ${currencyFilter(Math.abs(tooltipValue))}`;
+      const tooltip = `${tooltipValue < 0 ? localizeFilter('MoreThan') : localizeFilter('Stayed')} ${currencyFilter(Math.abs(tooltipValue))}`;
 
       return {
         ...c, progressPercent, progressColor, spend, tooltip

@@ -5,7 +5,7 @@
       <div class="breadcrumb-wrap">
         <router-link to="/history" class="breadcrumb">{{"Menu_History" | localize}}</router-link>
         <a @click.prevent class="breadcrumb">
-          {{record.type === 'income' ? 'Доход' : 'Расход'}}
+          {{record.type === 'income' ? 'Income' : 'Outcome' | localize}}
         </a>
       </div>
       <div class="row">
