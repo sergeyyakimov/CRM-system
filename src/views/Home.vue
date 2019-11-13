@@ -26,6 +26,11 @@ import HomeCurrency from '@/components/HomeCurrency.vue';
 import messages from '@/utils/messages.js';
 export default {
   name: 'home',
+  metaInfo() {
+    return {
+      title: this.$title('Menu_Bill')
+    }
+  },
   data: () => ({
     loading: true,
     currency: null
