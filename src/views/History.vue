@@ -5,7 +5,7 @@
     </div>
 
     <div class="history-chart">
-      <canvas></canvas>
+      <canvas ref='canvas'></canvas>
     </div>
 
     <Loader v-if='loading'/>
@@ -30,8 +30,11 @@
 <script>
 import paginationMixin from '@/mixins/pagination.mixin.js';
 import HistoryTable from '@/components/HistoryTable.vue';
+import {Pie} from 'vue-chartjs';
+
 export default {
   name: 'history',
+  extends: Pie,
   mixins: [paginationMixin],
   data: () => ({
     loading: true,
@@ -41,15 +44,51 @@ export default {
     this.records = await this.$store.dispatch('fetchRecords');
     const categories= await this.$store.dispatch('fetchCategories');
 
-    this.setupPagination(this.records.map(record => ({
-      ...record,
-      categoryName: categories.find(category => record.categoryId === category.id).title,
-      typeClass: record.type === 'income' ? 'green' : 'red',
-      typeText: record.type === 'income' ? 'Доход' : 'Расход',
-    })));
+    this.setup(categories);
 
     this.loading = false;
-    console.log(this.records);
+  },
+  methods: {
+    setup(categories) {
+      this.setupPagination(this.records.map(record => ({
+        ...record,
+        categoryName: categories.find(category => record.categoryId === category.id).title,
+        typeClass: record.type === 'income' ? 'green' : 'red',
+        typeText: record.type === 'income' ? 'Доход' : 'Расход',
+      })));
+
+      this.renderChart({
+        labels: categories.map(c => c.title),
+        datasets: [{
+            label: 'Расходы по категориям',
+            data: categories.map(c => {
+              return this.records.reduce((total, r) => {
+                if (r.categoryId === c.id && r.type === 'outcome') {
+                  total += +r.amount;
+                }
+                return total;
+              }, 0)
+            }),
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+      })
+    }
   },
   components: {
     HistoryTable
